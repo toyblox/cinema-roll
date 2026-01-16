@@ -569,3 +569,266 @@ input {
   font-size: 2rem;
   border-radius: var(--radius);
 }
+
+/* Similar Movies Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  background: transparent;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.modal-header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.modal-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+}
+
+.modal-subtitle strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.modal-loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+.modal-empty {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+}
+
+.similar-movies-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 24px 32px;
+}
+
+@media (max-width: 600px) {
+  .similar-movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.similar-movie-card {
+  position: relative;
+  cursor: pointer;
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.similar-movie-card:hover {
+  transform: scale(1.03);
+}
+
+.similar-movie-card.added {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.similar-movie-card.added:hover {
+  transform: none;
+}
+
+.similar-movie-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display: block;
+}
+
+.similar-movie-no-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font-size: 1.5rem;
+}
+
+.similar-movie-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px 10px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+}
+
+.similar-movie-title {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.similar-movie-year {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.similar-movie-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.similar-movie-rating-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  animation: fadeIn 0.15s ease;
+}
+
+.rating-prompt {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.modal-star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.modal-star {
+  font-size: 1.5rem;
+  color: var(--border);
+  background: none;
+  padding: 2px;
+  transition: color 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.modal-star:hover {
+  transform: scale(1.15);
+}
+
+.modal-star.filled {
+  color: var(--accent);
+}
+
+.skip-rating {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: transparent;
+  padding: 6px 12px;
+  margin-top: 4px;
+  transition: color 0.2s ease;
+}
+
+.skip-rating:hover {
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  padding: 20px 32px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-done-btn {
+  padding: 12px 32px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--bg-primary);
+  background: var(--accent);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.modal-done-btn:hover {
+  background: var(--accent-light);
+}

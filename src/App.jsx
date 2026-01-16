@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
-import { searchMovies } from './lib/tmdb'
+import { searchMovies, getSimilarMovieRecommendations } from './lib/tmdb'
 import { getRecommendations } from './lib/claude'
 import MovieCard from './components/MovieCard'
+import SimilarMoviesModal from './components/SimilarMoviesModal'
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -14,6 +15,10 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [recommendation, setRecommendation] = useState(null)
   const [recommendLoading, setRecommendLoading] = useState(false)
+  const [showSimilarModal, setShowSimilarModal] = useState(false)
+  const [similarMovies, setSimilarMovies] = useState([])
+  const [addedMovie, setAddedMovie] = useState(null)
+  const [similarLoading, setSimilarLoading] = useState(false)
 
   useEffect(() => {
     loadLists()
@@ -46,7 +51,7 @@ function App() {
     setLoading(false)
   }
 
-  async function addToList(movie, listType) {
+  async function addToList(movie, listType, rating = null, showModal = true) {
     const existingInToWatch = toWatchList.find(m => m.tmdb_id === movie.id)
     const existingInWatched = watchedList.find(m => m.tmdb_id === movie.id)
 
@@ -64,11 +69,26 @@ function App() {
       release_date: movie.release_date,
       overview: movie.overview,
       vote_average: movie.vote_average,
-      list_type: listType
+      list_type: listType,
+      rating: rating
     }
 
     await supabase.from('movies').insert(movieData)
     await loadLists()
+
+    // Show similar movies modal when adding to watched
+    if (listType === 'watched' && showModal) {
+      setAddedMovie(movie)
+      setShowSimilarModal(true)
+      setSimilarLoading(true)
+      const similar = await getSimilarMovieRecommendations(movie.id)
+      setSimilarMovies(similar)
+      setSimilarLoading(false)
+    }
+  }
+
+  async function addFromModal(movie, rating) {
+    await addToList(movie, 'watched', rating, false)
   }
 
   async function removeFromList(movieId) {
@@ -282,6 +302,20 @@ function App() {
           )}
         </section>
       )}
+
+      <SimilarMoviesModal
+        isOpen={showSimilarModal}
+        onClose={() => {
+          setShowSimilarModal(false)
+          setSimilarMovies([])
+          setAddedMovie(null)
+        }}
+        addedMovie={addedMovie}
+        similarMovies={similarMovies}
+        onAddToWatched={addFromModal}
+        watchedList={watchedList}
+        loading={similarLoading}
+      />
     </div>
   )
 }

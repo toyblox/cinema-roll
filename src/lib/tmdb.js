@@ -38,3 +38,16 @@ export async function getPopularMovies() {
     return []
   }
 }
+
+export async function getSimilarMovieRecommendations(movieId, limit = 8) {
+  try {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/movie/${movieId}/recommendations?api_key=${TMDB_API_KEY}`
+    )
+    const data = await response.json()
+    return (data.results || []).slice(0, limit)
+  } catch (error) {
+    console.error('Error getting similar movies:', error)
+    return []
+  }
+}
