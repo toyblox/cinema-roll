@@ -747,16 +747,18 @@ input {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 24px;
+  min-width: 24px;
   height: 24px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
   color: var(--bg-primary);
-  border-radius: 50%;
-  font-size: 0.75rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .similar-movie-rating-overlay {
@@ -810,6 +812,41 @@ input {
 
 .skip-rating:hover {
   color: var(--text-primary);
+}
+
+.list-choice-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.list-choice-btn {
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.list-choice-btn.to-watch {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+}
+
+.list-choice-btn.to-watch:hover {
+  border-color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.list-choice-btn.watched {
+  color: var(--bg-primary);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.list-choice-btn.watched:hover {
+  background: var(--accent-light);
+  border-color: var(--accent-light);
 }
 
 .modal-footer {

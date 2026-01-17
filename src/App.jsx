@@ -87,7 +87,11 @@ function App() {
     }
   }
 
-  async function addFromModal(movie, rating) {
+  async function addToWatchFromModal(movie) {
+    await addToList(movie, 'to_watch', null, false)
+  }
+
+  async function addToWatchedFromModal(movie, rating) {
     await addToList(movie, 'watched', rating, false)
   }
 
@@ -312,7 +316,9 @@ function App() {
         }}
         addedMovie={addedMovie}
         similarMovies={similarMovies}
-        onAddToWatched={addFromModal}
+        onAddToWatch={addToWatchFromModal}
+        onAddToWatched={addToWatchedFromModal}
+        toWatchList={toWatchList}
         watchedList={watchedList}
         loading={similarLoading}
       />

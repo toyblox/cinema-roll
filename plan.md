@@ -45,6 +45,9 @@ These were mentioned but not yet built:
 
 1. **Mood-based picks** - Get recommendations based on current mood (e.g., "something light", "make me cry", "mind-bending")
 2. **Reviews** - The database has a `review` column but UI doesn't use it yet
+3. **List sorting** - Sort movies in both lists by genre, rating, date added, alphabetical
+4. **Inline rating from search** - Adding to Watched from search should prompt for rating (currently only modal does this)
+5. **UI spacing fixes** - Various spacing issues to address
 
 ## File Structure
 
@@ -82,7 +85,13 @@ Single `movies` table:
 - Added similar movies modal for faster list building
 - Set up GitHub repo at github.com/toyblox/cinema-roll
 
+### Session 2
+- Updated similar movies modal to allow choosing between "To Watch" and "Watched" lists
+- Changed TMDB endpoint from `/similar` to `/recommendations` for better results
+- Added list choice UI with rating flow for watched movies
+
 ### Next Session Should
-- Consider implementing mood-based picks
+- Work on list sorting functionality
+- Fix inline rating when adding to Watched from search
+- Address UI spacing issues
 - Or work on whatever the user requests
-- Update this file with progress

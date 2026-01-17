@@ -26,7 +26,8 @@ function StarRating({ rating, onRate }) {
   )
 }
 
-function SimilarMovieCard({ movie, isAdded, onAdd, watchedList }) {
+function SimilarMovieCard({ movie, isAdded, addedListType, onAddToWatch, onAddToWatched, toWatchList, watchedList }) {
+  const [showListChoice, setShowListChoice] = useState(false)
   const [showRating, setShowRating] = useState(false)
   const [selectedRating, setSelectedRating] = useState(0)
 
@@ -38,21 +39,38 @@ function SimilarMovieCard({ movie, isAdded, onAdd, watchedList }) {
     ? new Date(movie.release_date).getFullYear()
     : ''
 
-  const alreadyInList = watchedList.some(m => m.tmdb_id === movie.id)
+  const inToWatch = toWatchList.some(m => m.tmdb_id === movie.id)
+  const inWatched = watchedList.some(m => m.tmdb_id === movie.id)
+  const alreadyInList = inToWatch || inWatched
 
   const handleClick = () => {
     if (alreadyInList || isAdded) return
+    setShowListChoice(true)
+  }
+
+  const handleSelectToWatch = () => {
+    onAddToWatch(movie)
+    setShowListChoice(false)
+  }
+
+  const handleSelectWatched = () => {
+    setShowListChoice(false)
     setShowRating(true)
   }
 
   const handleRate = (rating) => {
     setSelectedRating(rating)
-    onAdd(movie, rating)
+    onAddToWatched(movie, rating)
     setShowRating(false)
   }
 
   const handleSkipRating = () => {
-    onAdd(movie, null)
+    onAddToWatched(movie, null)
+    setShowRating(false)
+  }
+
+  const handleCancel = () => {
+    setShowListChoice(false)
     setShowRating(false)
   }
 
@@ -73,7 +91,26 @@ function SimilarMovieCard({ movie, isAdded, onAdd, watchedList }) {
       </div>
 
       {(alreadyInList || isAdded) && (
-        <div className="similar-movie-check">✓</div>
+        <div className="similar-movie-check">
+          {isAdded ? (addedListType === 'to_watch' ? '+ Queue' : '✓') : (inToWatch ? '+ Queue' : '✓')}
+        </div>
+      )}
+
+      {showListChoice && !alreadyInList && !isAdded && (
+        <div className="similar-movie-rating-overlay" onClick={e => e.stopPropagation()}>
+          <span className="rating-prompt">Add to...</span>
+          <div className="list-choice-buttons">
+            <button className="list-choice-btn to-watch" onClick={handleSelectToWatch}>
+              To Watch
+            </button>
+            <button className="list-choice-btn watched" onClick={handleSelectWatched}>
+              Watched
+            </button>
+          </div>
+          <button className="skip-rating" onClick={handleCancel}>
+            Cancel
+          </button>
+        </div>
       )}
 
       {showRating && !alreadyInList && !isAdded && (
@@ -94,7 +131,9 @@ function SimilarMoviesModal({
   onClose,
   addedMovie,
   similarMovies,
+  onAddToWatch,
   onAddToWatched,
+  toWatchList,
   watchedList,
   loading
 }) {
@@ -102,9 +141,14 @@ function SimilarMoviesModal({
 
   if (!isOpen) return null
 
-  const handleAdd = (movie, rating) => {
+  const handleAddToWatch = (movie) => {
+    onAddToWatch(movie)
+    setAddedMovies(prev => ({ ...prev, [movie.id]: { added: true, listType: 'to_watch' } }))
+  }
+
+  const handleAddToWatched = (movie, rating) => {
     onAddToWatched(movie, rating)
-    setAddedMovies(prev => ({ ...prev, [movie.id]: true }))
+    setAddedMovies(prev => ({ ...prev, [movie.id]: { added: true, listType: 'watched' } }))
   }
 
   const handleClose = () => {
@@ -121,7 +165,7 @@ function SimilarMoviesModal({
           <h2>Added to Watched</h2>
           {addedMovie && (
             <p className="modal-subtitle">
-              You watched <strong>{addedMovie.title}</strong>. Have you seen these too?
+              You watched <strong>{addedMovie.title}</strong>. Seen any of these?
             </p>
           )}
         </div>
@@ -136,14 +180,17 @@ function SimilarMoviesModal({
               <SimilarMovieCard
                 key={movie.id}
                 movie={movie}
-                isAdded={addedMovies[movie.id]}
-                onAdd={handleAdd}
+                isAdded={addedMovies[movie.id]?.added}
+                addedListType={addedMovies[movie.id]?.listType}
+                onAddToWatch={handleAddToWatch}
+                onAddToWatched={handleAddToWatched}
+                toWatchList={toWatchList}
                 watchedList={watchedList}
               />
             ))}
           </div>
         ) : (
-          <p className="modal-empty">No similar movies found</p>
+          <p className="modal-empty">No recommendations found</p>
         )}
 
         <div className="modal-footer">
