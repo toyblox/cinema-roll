@@ -345,6 +345,12 @@ input {
   opacity: 0.85;
 }
 
+.movie-poster-container {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
 .movie-poster {
   width: 100%;
   aspect-ratio: 2/3;
@@ -352,6 +358,19 @@ input {
   background: var(--bg-secondary);
   border-radius: var(--radius);
   transition: opacity 0.4s ease;
+}
+
+.card-rating-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  animation: fadeIn 0.15s ease;
+  border-radius: var(--radius);
 }
 
 .movie-info {
@@ -415,19 +434,21 @@ input {
 
 .star-rating {
   display: flex;
-  gap: 3px;
+  gap: 4px;
 }
 
 .star {
-  font-size: 1.1rem;
-  color: var(--border);
   background: none;
   padding: 0;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.star.filled {
-  color: var(--accent);
+.star .cinnamon-icon {
+  width: 22px;
+  height: 22px;
 }
 
 .star.interactive {
@@ -781,24 +802,26 @@ input {
 
 .modal-star-rating {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .modal-star {
-  font-size: 1.5rem;
-  color: var(--border);
   background: none;
   padding: 2px;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: transform 0.15s ease;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-star .cinnamon-icon {
+  width: 28px;
+  height: 28px;
 }
 
 .modal-star:hover {
   transform: scale(1.15);
-}
-
-.modal-star.filled {
-  color: var(--accent);
 }
 
 .skip-rating {

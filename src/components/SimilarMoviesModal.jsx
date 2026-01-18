@@ -2,6 +2,15 @@ import { useState } from 'react'
 
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w300'
 
+function CinnamonRoll({ filled }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="cinnamon-icon" style={{ opacity: filled ? 1 : 0.3 }}>
+      <circle cx="12" cy="12" r="10" fill="#c17f59"/>
+      <path d="M12 5c-3.9 0-7 3.1-7 7s3.1 7 7 7c2.8 0 5-2.2 5-5s-2.2-5-5-5c-1.7 0-3 1.3-3 3s1.3 3 3 3" stroke="#f5e6d3" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
 function StarRating({ rating, onRate }) {
   const [hoverRating, setHoverRating] = useState(0)
 
@@ -11,7 +20,7 @@ function StarRating({ rating, onRate }) {
         <button
           key={star}
           type="button"
-          className={`modal-star ${star <= (hoverRating || rating) ? 'filled' : ''}`}
+          className="modal-star"
           onClick={(e) => {
             e.stopPropagation()
             onRate(star)
@@ -19,7 +28,7 @@ function StarRating({ rating, onRate }) {
           onMouseEnter={() => setHoverRating(star)}
           onMouseLeave={() => setHoverRating(0)}
         >
-          ★
+          <CinnamonRoll filled={star <= (hoverRating || rating)} />
         </button>
       ))}
     </div>

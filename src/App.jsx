@@ -292,7 +292,7 @@ function App() {
                   isInToWatch={isInToWatch(movie.id)}
                   isInWatched={isInWatched(movie.id)}
                   onAddToWatch={() => addToList(movie, 'to_watch')}
-                  onAddWatched={() => addToList(movie, 'watched')}
+                  onAddWatched={(rating) => addToList(movie, 'watched', rating)}
                   showRemove={false}
                   isWatchedTab={false}
                 />

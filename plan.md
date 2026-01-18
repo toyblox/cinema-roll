@@ -14,8 +14,8 @@ The app is functional with these features complete:
 - **AI Recommendations**: Claude analyzes watched + to-watch lists and recommends a movie
 - **Movie Search**: TMDB integration for searching and adding movies
 - **Two Lists**: "To Watch" (queue) and "Watched" (history)
-- **Personal Ratings**: 5-star rating system for watched movies
-- **Similar Movies Modal**: After adding to Watched, shows 8 related movies for quick bulk-adding with ratings
+- **Personal Ratings**: 5-cinnamon-roll rating system for watched movies (inline prompt when adding)
+- **Recommendations Modal**: After adding to Watched, shows 8 TMDB-recommended movies with option to add to either list
 
 ### Tech Stack
 - React + Vite
@@ -30,6 +30,8 @@ The app is functional with these features complete:
 - Copper accent (#c17f59)
 - DM Serif Display for headings (soft, elegant serif)
 - Inter for body text (clean, light)
+- Custom cinnamon roll SVG icons for ratings (icing drizzle style)
+- Cinnamon roll favicon (outline style)
 
 ## Design Decisions Made
 
@@ -46,20 +48,21 @@ These were mentioned but not yet built:
 1. **Mood-based picks** - Get recommendations based on current mood (e.g., "something light", "make me cry", "mind-bending")
 2. **Reviews** - The database has a `review` column but UI doesn't use it yet
 3. **List sorting** - Sort movies in both lists by genre, rating, date added, alphabetical
-4. **Inline rating from search** - Adding to Watched from search should prompt for rating (currently only modal does this)
-5. **UI spacing fixes** - Various spacing issues to address
+4. **UI spacing fixes** - Various spacing issues to address
 
 ## File Structure
 
 ```
+public/
+└── favicon.svg          # Cinnamon roll favicon (outline style)
 src/
 ├── App.jsx              # Main app, state management, tab routing
 ├── components/
-│   ├── MovieCard.jsx    # Card with poster, rating, actions
+│   ├── MovieCard.jsx    # Card with poster, CinnamonRoll rating, actions
 │   └── SimilarMoviesModal.jsx  # Post-add modal with related movies
 ├── lib/
 │   ├── supabase.js      # Database client
-│   ├── tmdb.js          # Movie search, details, similar movies
+│   ├── tmdb.js          # Movie search, details, recommendations
 │   └── claude.js        # AI recommendation generation
 └── index.css            # All styles (CSS custom properties)
 ```
@@ -86,12 +89,13 @@ Single `movies` table:
 - Set up GitHub repo at github.com/toyblox/cinema-roll
 
 ### Session 2
-- Updated similar movies modal to allow choosing between "To Watch" and "Watched" lists
+- Updated recommendations modal to allow choosing between "To Watch" and "Watched" lists
 - Changed TMDB endpoint from `/similar` to `/recommendations` for better results
-- Added list choice UI with rating flow for watched movies
+- Added inline rating prompt when adding to Watched from search
+- Replaced star ratings with custom cinnamon roll SVG icons (icing drizzle style)
+- Added cinnamon roll favicon (outline style)
 
 ### Next Session Should
 - Work on list sorting functionality
-- Fix inline rating when adding to Watched from search
 - Address UI spacing issues
 - Or work on whatever the user requests
