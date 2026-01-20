@@ -152,28 +152,92 @@ input {
 
 .recommendation-result {
   margin-top: 56px;
-  padding: 32px 36px;
-  background: var(--bg-secondary);
-  border-left: 2px solid var(--accent);
-  border-radius: var(--radius);
-  text-align: left;
-  max-width: 600px;
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.recommendation-result h3 {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  margin-bottom: 14px;
-  color: var(--accent);
+.recommendation-card {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  text-align: left;
 }
 
-.recommendation-result p {
-  line-height: 1.85;
+.recommendation-poster {
+  flex-shrink: 0;
+  width: 150px;
+}
+
+.recommendation-poster img {
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.recommendation-poster .no-poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  font-size: 2rem;
+}
+
+.recommendation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.recommendation-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.recommendation-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.recommendation-year {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.recommendation-rating {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.recommendation-reason {
+  line-height: 1.7;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 300;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.recommendation-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.recommendation-error {
+  padding: 24px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  text-align: center;
 }
 
 /* Quick Stats */

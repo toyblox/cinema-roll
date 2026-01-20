@@ -114,8 +114,29 @@ function App() {
     }
 
     setRecommendLoading(true)
+    setRecommendation(null)
+
     const result = await getRecommendations(toWatchList, watchedList)
-    setRecommendation(result)
+
+    if (result.success) {
+      // Search TMDB for the movie to get poster and ratings
+      const searchResults = await searchMovies(`${result.title} ${result.year}`)
+      const movie = searchResults.find(m => {
+        const titleMatch = m.title.toLowerCase() === result.title.toLowerCase()
+        const yearMatch = m.release_date?.startsWith(String(result.year))
+        return titleMatch || yearMatch
+      }) || searchResults[0]
+
+      setRecommendation({
+        movie,
+        reason: result.reason,
+        title: result.title,
+        year: result.year
+      })
+    } else {
+      setRecommendation({ error: result.error })
+    }
+
     setRecommendLoading(false)
   }
 
@@ -178,8 +199,52 @@ function App() {
 
           {recommendation && (
             <div className="recommendation-result">
-              <h3>Your Recommendation</h3>
-              <p>{recommendation}</p>
+              {recommendation.error ? (
+                <p className="recommendation-error">{recommendation.error}</p>
+              ) : recommendation.movie ? (
+                <div className="recommendation-card">
+                  <div className="recommendation-poster">
+                    {recommendation.movie.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w300${recommendation.movie.poster_path}`}
+                        alt={recommendation.movie.title}
+                      />
+                    ) : (
+                      <div className="no-poster">🎬</div>
+                    )}
+                  </div>
+                  <div className="recommendation-info">
+                    <h3>{recommendation.movie.title}</h3>
+                    <div className="recommendation-meta">
+                      <span className="recommendation-year">
+                        {recommendation.movie.release_date?.split('-')[0]}
+                      </span>
+                      {recommendation.movie.vote_average > 0 && (
+                        <span className="recommendation-rating">
+                          ★ {recommendation.movie.vote_average.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="recommendation-reason">{recommendation.reason}</p>
+                    <div className="recommendation-actions">
+                      <button
+                        className={`action-btn to-watch ${isInToWatch(recommendation.movie.id) ? 'active' : ''}`}
+                        onClick={() => addToList(recommendation.movie, 'to_watch')}
+                      >
+                        {isInToWatch(recommendation.movie.id) ? '✓ To Watch' : '+ To Watch'}
+                      </button>
+                      <button
+                        className={`action-btn watched ${isInWatched(recommendation.movie.id) ? 'active' : ''}`}
+                        onClick={() => addToList(recommendation.movie, 'watched')}
+                      >
+                        {isInWatched(recommendation.movie.id) ? '✓ Watched' : '+ Watched'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p>Could not find movie details for "{recommendation.title}"</p>
+              )}
             </div>
           )}
 

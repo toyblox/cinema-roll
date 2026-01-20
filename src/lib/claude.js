@@ -2,24 +2,20 @@ const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY
 
 export async function getRecommendations(toWatchList, watchedList) {
   const toWatchTitles = toWatchList.map(m => m.title).join(', ')
-  const watchedTitles = watchedList.map(m => m.title).join(', ')
+  const watchedTitles = watchedList.map(m => `${m.title}${m.rating ? ` (${m.rating}/5)` : ''}`).join(', ')
 
   const prompt = `Based on the user's movie preferences, recommend ONE movie they should watch next.
 
 Movies they want to watch: ${toWatchTitles || 'None'}
-Movies they've already watched: ${watchedTitles || 'None'}
+Movies they've already watched (with their ratings): ${watchedTitles || 'None'}
 
 Analyze their taste based on these movies (genres, themes, directors, actors, tone). Then recommend a single movie that:
 1. Is NOT in either of their lists
 2. Matches their apparent taste
 3. They likely haven't seen
 
-Provide:
-- The movie title and year
-- Why you think they'd enjoy it based on their existing taste
-- A brief description of what makes it special
-
-Keep your response concise and enthusiastic.`
+Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
+{"title": "Movie Title", "year": 2020, "reason": "2-3 sentences explaining why they'd enjoy this based on their taste."}`
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -32,7 +28,7 @@ Keep your response concise and enthusiastic.`
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
+        max_tokens: 300,
         messages: [
           {
             role: 'user',
@@ -45,12 +41,17 @@ Keep your response concise and enthusiastic.`
     const data = await response.json()
 
     if (data.content && data.content[0]) {
-      return data.content[0].text
+      try {
+        const parsed = JSON.parse(data.content[0].text)
+        return { success: true, ...parsed }
+      } catch {
+        return { success: false, error: 'Failed to parse recommendation' }
+      }
     }
 
-    return 'Unable to generate recommendation. Please try again.'
+    return { success: false, error: 'Unable to generate recommendation' }
   } catch (error) {
     console.error('Error getting recommendations:', error)
-    return 'Error connecting to AI. Please check your API key and try again.'
+    return { success: false, error: 'Error connecting to AI' }
   }
 }
