@@ -101,6 +101,11 @@ Single `movies` table:
   - Reduced cinnamon roll icon size for better fit in narrow cards
   - Stacked "To Watch" / "Watched" buttons vertically instead of side-by-side
   - Added padding and adjusted gaps throughout overlay components
+- Set up testing infrastructure:
+  - Vitest + React Testing Library
+  - Simple mocking with vi.stubGlobal for fetch (chose this over MSW for less overhead)
+  - Example tests for MovieCard component (11 tests) and tmdb.js lib (8 tests)
+  - Shared fixtures in src/test/mocks/fixtures.js
 
 ### Next Session Should
 - Work on list sorting functionality

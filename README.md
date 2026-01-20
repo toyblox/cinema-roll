@@ -69,6 +69,9 @@ src/
     supabase.js            # Database client
     tmdb.js                # TMDB API (search, recommendations)
     claude.js              # Claude API for AI recommendations
+  test/
+    setup.js               # Test setup (jest-dom matchers)
+    mocks/fixtures.js      # Shared test data
   index.css                # All styles
 ```
 
@@ -79,6 +82,8 @@ src/
 | `npm run dev` | Start dev server |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
+| `npm test` | Run tests in watch mode |
+| `npm run test:run` | Run tests once |
 
 ## Design
 
@@ -92,8 +97,9 @@ src/
 1. Check `plan.md` for current status and planned features
 2. Create a feature branch
 3. Make your changes
-4. Test with `npm run build`
-5. Submit a PR
+4. Run tests with `npm run test:run`
+5. Build with `npm run build`
+6. Submit a PR
 
 ## License
 

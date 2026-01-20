@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Production build
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
+- `npm test` - Run tests in watch mode (Vitest)
+- `npm run test:run` - Run tests once
 
 ## Architecture
 
@@ -40,3 +42,44 @@ Three main views controlled by `activeTab` state in `App.jsx`:
 ### Styling
 
 Minimalist noir design with copper accent color. Uses DM Serif Display for headings and Inter for body text. All styles in `src/index.css` using CSS custom properties.
+
+## Testing
+
+Tests use Vitest + React Testing Library. Test files live next to source files (`*.test.js` / `*.test.jsx`).
+
+### Mocking fetch
+
+Use `vi.stubGlobal` to mock fetch in API tests:
+
+```js
+const mockFetch = vi.fn()
+vi.stubGlobal('fetch', mockFetch)
+
+mockFetch.mockResolvedValueOnce({
+  json: () => Promise.resolve({ results: [...] })
+})
+```
+
+### Error handling tests
+
+Suppress expected console.error and verify it was called:
+
+```js
+it('returns empty array on error', async () => {
+  const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+  mockFetch.mockRejectedValueOnce(new Error('Network error'))
+
+  const results = await searchMovies('test')
+
+  expect(results).toEqual([])
+  expect(consoleSpy).toHaveBeenCalledWith(
+    'Error searching movies:',
+    expect.any(Error)
+  )
+  consoleSpy.mockRestore()
+})
+```
+
+### Shared fixtures
+
+Common test data lives in `src/test/mocks/fixtures.js`.
