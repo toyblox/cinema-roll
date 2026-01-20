@@ -48,7 +48,7 @@ These were mentioned but not yet built:
 1. **Mood-based picks** - Get recommendations based on current mood (e.g., "something light", "make me cry", "mind-bending")
 2. **Reviews** - The database has a `review` column but UI doesn't use it yet
 3. **List sorting** - Sort movies in both lists by genre, rating, date added, alphabetical
-4. **UI spacing fixes** - Various spacing issues to address
+4. **User authentication** - Support multiple users with their own lists
 
 ## File Structure
 
@@ -95,7 +95,15 @@ Single `movies` table:
 - Replaced star ratings with custom cinnamon roll SVG icons (icing drizzle style)
 - Added cinnamon roll favicon (outline style)
 
+### Session 3
+- Connected Claude API for AI-powered movie recommendations (analyzes watched + to-watch lists, returns personalized pick with reasoning)
+- Fixed UI spacing issues in SimilarMoviesModal overlays:
+  - Reduced cinnamon roll icon size for better fit in narrow cards
+  - Stacked "To Watch" / "Watched" buttons vertically instead of side-by-side
+  - Added padding and adjusted gaps throughout overlay components
+
 ### Next Session Should
 - Work on list sorting functionality
-- Address UI spacing issues
+- Add mood-based recommendations (e.g., "something light", "make me cry", "mind-bending")
+- Add user authentication for multiple users
 - Or work on whatever the user requests
