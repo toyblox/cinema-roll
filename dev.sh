@@ -9,18 +9,23 @@ if [ -z "$ANTHROPIC_API_KEY" ]; then
   exit 1
 fi
 
-# Kill both servers on Ctrl+C
+# Clear any stale processes on the ports we need
+kill $(lsof -ti tcp:3001 2>/dev/null) 2>/dev/null || true
+kill $(lsof -ti tcp:5173 2>/dev/null) 2>/dev/null || true
+sleep 0.5
+
+# Kill entire process group on Ctrl+C
 cleanup() {
   echo ""
   echo "Shutting down..."
-  kill "$API_PID" "$VITE_PID" 2>/dev/null
-  wait "$API_PID" "$VITE_PID" 2>/dev/null
+  kill $(lsof -ti tcp:3001 2>/dev/null) 2>/dev/null || true
+  kill $(lsof -ti tcp:5173 2>/dev/null) 2>/dev/null || true
   exit 0
 }
 trap cleanup SIGINT SIGTERM
 
 echo "Starting API server on :3001..."
-ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" npm --prefix api run dev &
+ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" node --watch api/server.js &
 API_PID=$!
 
 echo "Starting Vite on :5173..."

@@ -4,7 +4,9 @@ A personal movie recommendation app that answers "What are we watching tonight?"
 
 ## Features
 
+- **Oven UI**: Animated oven reveals your AI recommendation — door opens, steam rises, movie appears inside
 - **AI Recommendations**: Claude analyzes your watched and to-watch lists to recommend movies tailored to your taste — or picks a great general film if you're not signed in
+- **Dismiss & Retry**: "Not this one" skips a recommendation and immediately fetches a new one, excluding dismissed titles from future picks
 - **Movie Search**: Search and add movies via TMDB integration
 - **Two Lists**: Maintain a "To Watch" queue and "Watched" history
 - **Cinnamon Roll Ratings**: Rate watched movies on a 5-cinnamon-roll scale
@@ -48,8 +50,10 @@ Create a `.env` file in the project root:
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_TMDB_API_KEY=your_tmdb_api_key
-VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
+
+> Note: `ANTHROPIC_API_KEY` has no `VITE_` prefix — it's only used by the Express API server and should never be exposed to the browser.
 
 ### 5. Run
 
@@ -57,16 +61,20 @@ VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+This starts both the Vite frontend (port 5173) and the Express API server (port 3001) together. Open [http://localhost:5173](http://localhost:5173).
 
 ## Project Structure
 
 ```
+api/
+  server.js                    # Express proxy server (holds Anthropic API key)
+  package.json                 # API server dependencies
 public/
   favicon.svg                  # Cinnamon roll favicon
 src/
   App.jsx                      # Main app, state management, tab routing
   components/
+    OvenRecommendation.jsx     # Animated oven UI for AI recommendations
     MovieCard.jsx              # Movie card with poster, ratings, actions
     SimilarMoviesModal.jsx     # Post-watch recommendations modal
     AuthModal.jsx              # Sign in / create account modal
@@ -74,7 +82,7 @@ src/
   lib/
     supabase.js                # Supabase client + auth helpers
     tmdb.js                    # TMDB API (search, recommendations)
-    claude.js                  # Claude API for AI recommendations
+    claude.js                  # Calls the API server for AI recommendations
   test/
     setup.js                   # Test setup (jest-dom matchers)
     mocks/fixtures.js          # Shared test data
@@ -86,7 +94,7 @@ supabase-schema.sql            # Full database schema (run once in Supabase)
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start dev server at localhost:5173 |
+| `npm run dev` | Start frontend (5173) + API server (3001) |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
 | `npm run lint` | Run ESLint |
