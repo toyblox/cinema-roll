@@ -11,9 +11,10 @@ app.post('/api/recommend', async (req, res) => {
     return res.status(500).json({ success: false, error: 'API key not configured' })
   }
 
-  const { toWatchList = [], watchedList = [] } = req.body
+  const { toWatchList = [], watchedList = [], dismissedMovies = [] } = req.body
 
   const hasLists = toWatchList.length > 0 || watchedList.length > 0
+  const dismissedTitles = dismissedMovies.map(m => m.title).join(', ')
 
   let prompt
 
@@ -27,9 +28,9 @@ app.post('/api/recommend', async (req, res) => {
 
 Movies they want to watch: ${toWatchTitles || 'None'}
 Movies they've already watched (with their ratings): ${watchedTitles || 'None'}
-
+${dismissedTitles ? `Movies to skip (user has dismissed these): ${dismissedTitles}\n` : ''}
 Analyze their taste based on these movies (genres, themes, directors, actors, tone). Then recommend a single movie that:
-1. Is NOT in either of their lists
+1. Is NOT in any of their lists or the skip list
 2. Matches their apparent taste
 3. They likely haven't seen
 
@@ -37,7 +38,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 {"title": "Movie Title", "year": 2020, "reason": "2-3 sentences explaining why they'd enjoy this based on their taste."}`
   } else {
     prompt = `Recommend ONE exceptional film that most cinephiles would love. Choose something critically acclaimed with broad appeal — a great film for any taste. Vary your choice each time.
-
+${dismissedTitles ? `\nDo not recommend any of these: ${dismissedTitles}\n` : ''}
 Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 {"title": "Movie Title", "year": 2020, "reason": "2-3 sentences about what makes this film great and worth watching."}`
   }

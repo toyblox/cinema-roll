@@ -6,6 +6,7 @@ import MovieCard from './components/MovieCard'
 import SimilarMoviesModal from './components/SimilarMoviesModal'
 import AuthModal from './components/AuthModal'
 import ProfileSettings from './components/ProfileSettings'
+import OvenRecommendation from './components/OvenRecommendation'
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -21,6 +22,13 @@ function App() {
   const [similarMovies, setSimilarMovies] = useState([])
   const [addedMovie, setAddedMovie] = useState(null)
   const [similarLoading, setSimilarLoading] = useState(false)
+
+  const [dismissedMovies, setDismissedMovies] = useState(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem('dismissedMovies') || '[]')
+      return Array.isArray(parsed) ? parsed : []
+    } catch { return [] }
+  })
 
   // Auth state
   const [session, setSession] = useState(null)
@@ -158,20 +166,18 @@ function App() {
     await loadLists(user)
   }
 
-  async function handleGetRecommendations() {
+  async function handleGetRecommendations(dismissed = dismissedMovies) {
     setRecommendLoading(true)
     setRecommendation(null)
 
-    const result = await getRecommendations(toWatchList, watchedList)
+    const result = await getRecommendations(toWatchList, watchedList, dismissed)
 
     if (result.success) {
       // Search TMDB for the movie to get poster and ratings
-      const searchResults = await searchMovies(`${result.title} ${result.year}`)
-      const movie = searchResults.find(m => {
-        const titleMatch = m.title.toLowerCase() === result.title.toLowerCase()
-        const yearMatch = m.release_date?.startsWith(String(result.year))
-        return titleMatch || yearMatch
-      }) || searchResults[0]
+      const searchResults = await searchMovies(result.title, result.year)
+      const movie = searchResults.find(
+        m => m.title.toLowerCase() === result.title.toLowerCase()
+      ) || searchResults[0]
 
       setRecommendation({
         movie,
@@ -184,6 +190,16 @@ function App() {
     }
 
     setRecommendLoading(false)
+  }
+
+  function handleDismiss(movie) {
+    const newDismissed = [
+      ...dismissedMovies,
+      { title: movie.title, year: movie.release_date?.split('-')[0] }
+    ]
+    setDismissedMovies(newDismissed)
+    localStorage.setItem('dismissedMovies', JSON.stringify(newDismissed))
+    handleGetRecommendations(newDismissed)
   }
 
   function isInToWatch(tmdbId) {
@@ -278,56 +294,15 @@ function App() {
             </p>
           )}
 
-          {recommendation && (
-            <div className="recommendation-result">
-              {recommendation.error ? (
-                <p className="recommendation-error">{recommendation.error}</p>
-              ) : recommendation.movie ? (
-                <div className="recommendation-card">
-                  <div className="recommendation-poster">
-                    {recommendation.movie.poster_path ? (
-                      <img
-                        src={`https://image.tmdb.org/t/p/w300${recommendation.movie.poster_path}`}
-                        alt={recommendation.movie.title}
-                      />
-                    ) : (
-                      <div className="no-poster">🎬</div>
-                    )}
-                  </div>
-                  <div className="recommendation-info">
-                    <h3>{recommendation.movie.title}</h3>
-                    <div className="recommendation-meta">
-                      <span className="recommendation-year">
-                        {recommendation.movie.release_date?.split('-')[0]}
-                      </span>
-                      {recommendation.movie.vote_average > 0 && (
-                        <span className="recommendation-rating">
-                          ★ {recommendation.movie.vote_average.toFixed(1)}
-                        </span>
-                      )}
-                    </div>
-                    <p className="recommendation-reason">{recommendation.reason}</p>
-                    <div className="recommendation-actions">
-                      <button
-                        className={`action-btn to-watch ${isInToWatch(recommendation.movie.id) ? 'active' : ''}`}
-                        onClick={() => addToList(recommendation.movie, 'to_watch')}
-                      >
-                        {isInToWatch(recommendation.movie.id) ? '✓ To Watch' : '+ To Watch'}
-                      </button>
-                      <button
-                        className={`action-btn watched ${isInWatched(recommendation.movie.id) ? 'active' : ''}`}
-                        onClick={() => addToList(recommendation.movie, 'watched')}
-                      >
-                        {isInWatched(recommendation.movie.id) ? '✓ Watched' : '+ Watched'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p>Could not find movie details for "{recommendation.title}"</p>
-              )}
-            </div>
-          )}
+          <OvenRecommendation
+            loading={recommendLoading}
+            recommendation={recommendation}
+            onSeenIt={(movie, rating) => addToList(movie, 'watched', rating)}
+            onAddToWatch={(movie) => addToList(movie, 'to_watch')}
+            onDismiss={handleDismiss}
+            isInWatched={isInWatched}
+            isInToWatch={isInToWatch}
+          />
 
           <div className="quick-stats">
             <div className="stat" onClick={() => { setActiveTab('lists'); setActiveListTab('toWatch'); }}>
