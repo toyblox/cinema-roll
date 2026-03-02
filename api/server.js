@@ -13,12 +13,17 @@ app.post('/api/recommend', async (req, res) => {
 
   const { toWatchList = [], watchedList = [] } = req.body
 
-  const toWatchTitles = toWatchList.map(m => m.title).join(', ')
-  const watchedTitles = watchedList
-    .map(m => `${m.title}${m.rating ? ` (${m.rating}/5)` : ''}`)
-    .join(', ')
+  const hasLists = toWatchList.length > 0 || watchedList.length > 0
 
-  const prompt = `Based on the user's movie preferences, recommend ONE movie they should watch next.
+  let prompt
+
+  if (hasLists) {
+    const toWatchTitles = toWatchList.map(m => m.title).join(', ')
+    const watchedTitles = watchedList
+      .map(m => `${m.title}${m.rating ? ` (${m.rating}/5)` : ''}`)
+      .join(', ')
+
+    prompt = `Based on the user's movie preferences, recommend ONE movie they should watch next.
 
 Movies they want to watch: ${toWatchTitles || 'None'}
 Movies they've already watched (with their ratings): ${watchedTitles || 'None'}
@@ -30,6 +35,12 @@ Analyze their taste based on these movies (genres, themes, directors, actors, to
 
 Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 {"title": "Movie Title", "year": 2020, "reason": "2-3 sentences explaining why they'd enjoy this based on their taste."}`
+  } else {
+    prompt = `Recommend ONE exceptional film that most cinephiles would love. Choose something critically acclaimed with broad appeal — a great film for any taste. Vary your choice each time.
+
+Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
+{"title": "Movie Title", "year": 2020, "reason": "2-3 sentences about what makes this film great and worth watching."}`
+  }
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {

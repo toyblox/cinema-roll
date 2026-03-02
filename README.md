@@ -4,16 +4,17 @@ A personal movie recommendation app that answers "What are we watching tonight?"
 
 ## Features
 
-- **AI Recommendations**: Claude analyzes your watched and to-watch lists to recommend movies tailored to your taste
+- **AI Recommendations**: Claude analyzes your watched and to-watch lists to recommend movies tailored to your taste — or picks a great general film if you're not signed in
 - **Movie Search**: Search and add movies via TMDB integration
 - **Two Lists**: Maintain a "To Watch" queue and "Watched" history
 - **Cinnamon Roll Ratings**: Rate watched movies on a 5-cinnamon-roll scale
 - **Smart Suggestions**: After marking a movie as watched, get recommendations for similar films
+- **User Accounts**: Email + password auth via Supabase — each user has independent lists
 
 ## Tech Stack
 
 - **Frontend**: React + Vite
-- **Database**: Supabase (PostgreSQL)
+- **Database**: Supabase (PostgreSQL + Auth)
 - **APIs**: TMDB (movie data), Anthropic Claude (AI recommendations)
 - **Styling**: Vanilla CSS with custom properties
 
@@ -30,8 +31,9 @@ npm install
 ### 2. Set up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Run the schema in `supabase-schema.sql` in the SQL editor
-3. Get your project URL and anon key from Settings > API
+2. Run `supabase-schema.sql` in the SQL Editor (Settings > SQL Editor)
+3. Enable email auth: Authentication > Providers > Email — turn off "Confirm email" for local dev
+4. Get your project URL and anon key from Settings > API
 
 ### 3. Get API keys
 
@@ -55,33 +57,39 @@ VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
 npm run dev
 ```
 
+Open [http://localhost:5173](http://localhost:5173).
+
 ## Project Structure
 
 ```
 public/
-  favicon.svg              # Cinnamon roll favicon
+  favicon.svg                  # Cinnamon roll favicon
 src/
-  App.jsx                  # Main app, state management, routing
+  App.jsx                      # Main app, state management, tab routing
   components/
-    MovieCard.jsx          # Movie card with poster, ratings, actions
-    SimilarMoviesModal.jsx # Post-watch recommendations modal
+    MovieCard.jsx              # Movie card with poster, ratings, actions
+    SimilarMoviesModal.jsx     # Post-watch recommendations modal
+    AuthModal.jsx              # Sign in / create account modal
+    ProfileSettings.jsx        # Edit display name modal
   lib/
-    supabase.js            # Database client
-    tmdb.js                # TMDB API (search, recommendations)
-    claude.js              # Claude API for AI recommendations
+    supabase.js                # Supabase client + auth helpers
+    tmdb.js                    # TMDB API (search, recommendations)
+    claude.js                  # Claude API for AI recommendations
   test/
-    setup.js               # Test setup (jest-dom matchers)
-    mocks/fixtures.js      # Shared test data
-  index.css                # All styles
+    setup.js                   # Test setup (jest-dom matchers)
+    mocks/fixtures.js          # Shared test data
+  index.css                    # All styles
+supabase-schema.sql            # Full database schema (run once in Supabase)
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start dev server |
+| `npm run dev` | Start dev server at localhost:5173 |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
 | `npm test` | Run tests in watch mode |
 | `npm run test:run` | Run tests once |
 
@@ -95,10 +103,10 @@ src/
 ## Contributing
 
 1. Check `plan.md` for current status and planned features
-2. Create a feature branch
+2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Make your changes
-4. Run tests with `npm run test:run`
-5. Build with `npm run build`
+4. Run tests: `npm run test:run`
+5. Build: `npm run build`
 6. Submit a PR
 
 ## License
